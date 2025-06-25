@@ -9,8 +9,8 @@ function closeModal(popup) {
 };
 
 function closeByEsc(evt) {
-  const popupIsOpen = document.querySelector(".popup_is-opened");
   if (evt.key === "Escape") {
+    const popupIsOpen = document.querySelector(".popup_is-opened");
     closeModal(popupIsOpen);
   }
 };

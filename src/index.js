@@ -1,6 +1,6 @@
 import './pages/index.css';
 import { initialCards } from './scripts/cards.js';
-import { createCard, deleteCard, hendleCardLike } from './components/card.js';
+import { createCard, deleteCard, handleCardLike } from './components/card.js';
 import { openModal, closeModal  } from './components/modal.js';
 
 
@@ -29,9 +29,9 @@ const popupCaption = popupImage.querySelector(".popup__caption");
 //Открытие модального окна изображения карточки
 
 function handleImageClick(evt) {
-  const cardTitle = evt.target.alt;
+  popupImageElement.alt = evt.target.alt;
   popupImageElement.src = evt.target.src;
-  popupCaption.textContent = cardTitle;
+  popupCaption.textContent = evt.target.alt;
 
   openModal(popupImage);
 };
@@ -47,13 +47,12 @@ function handleEditFormSubmit(evt) {
 
 //Добавление карточки
 
-function hendleAddFormSubmit(evt) {
+function handleAddFormSubmit(evt) {
   evt.preventDefault();
   const card = {};
   card.name = addName.value;
   card.link = addUrl.value;
-  card.description = addName.value;
-  cardsContainer.prepend(createCard(card, deleteCard, handleImageClick, hendleCardLike));
+  cardsContainer.prepend(createCard(card, deleteCard, handleImageClick, handleCardLike));
   addForm.reset();
   closeModal(addPopup);
 };
@@ -70,7 +69,7 @@ popups.forEach((popup) => {
   });
 });
 
-initialCards.map(card => createCard(card, deleteCard, handleImageClick, hendleCardLike)).forEach(card => cardsContainer.append(card));
+initialCards.map(card => createCard(card, deleteCard, handleImageClick, handleCardLike)).forEach(card => cardsContainer.append(card));
 
 editButton.addEventListener("click", () => {
   editName.value = profileTitle.textContent;
@@ -84,4 +83,4 @@ addButton.addEventListener("click", () => {
   openModal(addPopup)
 });
 
-addForm.addEventListener("submit", hendleAddFormSubmit);
+addForm.addEventListener("submit", handleAddFormSubmit);
