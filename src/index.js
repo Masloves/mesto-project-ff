@@ -3,6 +3,7 @@ import { initialCards } from './scripts/cards.js';
 import { createCard, deleteCard, handleCardLike } from './components/card.js';
 import { openModal, closeModal  } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
+import { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes } from './components/api.js'
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -12,7 +13,6 @@ const validationConfig = {
   inputErrorClass: "popup__input_type_error",
   errorClass: "popup__error_visible",
 };
-
 const cardsContainer = document.querySelector(".places__list");
 
 const editButton = document.querySelector(".profile__edit-button");
@@ -22,6 +22,7 @@ const editName = editPopup.querySelector(".popup__input_type_name");
 const editDescription = editPopup.querySelector(".popup__input_type_description");
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
+const profileImage = document.querySelector(".profile__image");
 
 const addButton = document.querySelector(".profile__add-button");
 const addPopup = document.querySelector(".popup_type_new-card");
@@ -47,24 +48,67 @@ function handleImageClick(evt) {
 
 //Редактирование имени и информации о себе
 
+function renderUser(user) {
+  profileTitle.textContent = user.name;
+  profileDescription.textContent = user.about;
+}
+
+function saveUserProfile(user, editPopup) {
+  getUserProfilePatch(user)
+    .then((user) => {
+      renderUser(user);
+      closeModal(editPopup)
+    })
+    .catch((err) => {
+      console.log(err);
+    })
+}
+
+editButton.addEventListener("click", () => {
+  editName.value = profileTitle.textContent;
+  editDescription.value = profileDescription.textContent;
+  clearValidation(editForm, validationConfig);
+  openModal(editPopup);
+});
+
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
-  profileTitle.textContent = editName.value;
-  profileDescription.textContent = editDescription.value;
-  closeModal(editPopup);
+  const user = {};
+  user.name = editName.value;
+  user.about = editDescription.value;
+  saveUserProfile(user, editPopup);
 };
 
+editForm.addEventListener("submit", handleEditFormSubmit);
+
 //Добавление карточки
+
+addButton.addEventListener("click", () => {
+  addForm.reset();
+  clearValidation(addForm, validationConfig);
+  openModal(addPopup)
+});
+
+function saveCard(card, addPopup) {
+  getCardPost(card)
+  .then((card) => {
+    cardsContainer.prepend(createCard(card, userId, deleteCard, handleImageClick, handleCardLike));
+    closeModal(addPopup);
+  })
+}
 
 function handleAddFormSubmit(evt) {
   evt.preventDefault();
   const card = {};
   card.name = addName.value;
   card.link = addUrl.value;
-  cardsContainer.prepend(createCard(card, deleteCard, handleImageClick, handleCardLike));
-  addForm.reset();
-  closeModal(addPopup);
+  // cardsContainer.prepend(createCard(card, deleteCard, handleImageClick, handleCardLike));
+  // addForm.reset();
+  saveCard(card, addPopup);
+  // closeModal(addPopup);
 };
+
+addForm.addEventListener("submit", handleAddFormSubmit);
 
 //Перебор массива с модалками и навешивание слушателя
 //на каждый оверлей и кнопку закрытия 
@@ -78,23 +122,21 @@ popups.forEach((popup) => {
   });
 });
 
-editButton.addEventListener("click", () => {
-  editName.value = profileTitle.textContent;
-  editDescription.value = profileDescription.textContent;
-  clearValidation(editForm, validationConfig);
-  openModal(editPopup);
-});
-
-editForm.addEventListener("submit", handleEditFormSubmit);
-
-addButton.addEventListener("click", () => {
-  addForm.reset();
-  clearValidation(addForm, validationConfig);
-  openModal(addPopup)
-});
-
-addForm.addEventListener("submit", handleAddFormSubmit);
-
-initialCards.map(card => createCard(card, deleteCard, handleImageClick, handleCardLike)).forEach(card => cardsContainer.append(card));
+// initialCards.map(card => createCard(card, deleteCard, handleImageClick, handleCardLike)).forEach(card => cardsContainer.append(card));
 
 enableValidation(validationConfig);
+
+function renderProfileImage(user) {
+  profileImage.style = `background-image: url(${user.avatar})`;
+}
+
+let userId
+
+Promise.all([getInitialUser(), getInitialCards()]).then(([user, cards]) => {
+  userId = user._id;
+  renderUser(user);
+  renderProfileImage(user);
+  cards.forEach(card => cardsContainer.append(createCard(card, userId, deleteCard, handleImageClick, handleCardLike)));
+  console.log(user);
+  console.log(cards);
+})
