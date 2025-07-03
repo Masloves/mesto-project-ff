@@ -113,6 +113,16 @@ const hideInputError = (formElement, inputElement) => {
 
 // Функция, которая проверяет валидность поля
 const isValid = (formElement, inputElement) => {
+  if (inputElement.validity.patternMismatch) {
+        // встроенный метод setCustomValidity принимает на вход строку
+        // и заменяет ею стандартное сообщение об ошибке
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
+  } else {
+        // если передать пустую строку, то будут доступны
+        // стандартные браузерные сообщения
+    inputElement.setCustomValidity("");
+  }
+
   if (!inputElement.validity.valid) {
     // Если поле не проходит валидацию, покажем ошибку
     showInputError(formElement, inputElement, inputElement.validationMessage);
@@ -129,6 +139,9 @@ const setEventListeners = (formElement) => {
   // Находим все поля внутри формы,
   // сделаем из них массив методом Array.from
   const inputList = Array.from(formElement.querySelectorAll('.popup__input'));
+  const buttonElement = formElement.querySelector('.popup__button');
+
+  toggleButtonState(inputList, buttonElement);
 
   // Обойдём все элементы полученной коллекции
   inputList.forEach((inputElement) => {
@@ -136,7 +149,9 @@ const setEventListeners = (formElement) => {
     inputElement.addEventListener('input', () => {
       // Внутри колбэка вызовем isValid,
       // передав ей форму и проверяемый элемент
-      isValid(formElement, inputElement)
+      isValid(formElement, inputElement);
+      // Вызовем toggleButtonState и передадим ей массив полей и кнопку
+      toggleButtonState(inputList, buttonElement);
     });
   });
 }; 
@@ -155,6 +170,30 @@ const enableValidation = () => {
     // передав ей элемент формы
     setEventListeners(formElement);
   });
+};
+
+const hasInvalidInput = (inputList) => {
+  // проходим по этому массиву методом some
+  return inputList.some((inputElement) => {
+        // Если поле не валидно, колбэк вернёт true
+    // Обход массива прекратится и вся функция
+    // hasInvalidInput вернёт true
+
+    return !inputElement.validity.valid;
+  })
+};
+
+const toggleButtonState = (inputList, buttonElement) => {
+  // Если есть хотя бы один невалидный инпут
+  if (hasInvalidInput(inputList)) {
+    // сделай кнопку неактивной
+    buttonElement.disabled = true;
+    buttonElement.classList.add('popup__button-inactive');
+  } else {
+    // иначе сделай кнопку активной
+    buttonElement.disabled = false;
+    buttonElement.classList.remove('popup__button-inactive');
+  }
 };
 
 // Вызовем функцию
