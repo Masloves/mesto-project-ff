@@ -1,8 +1,8 @@
-.form__input_type_error {
+.popup__input_type_error {
   border-bottom-color: #FF0000;
 }
 
-.form__input-error {
+.popup__error_visible {
   display: block;
   color: #ff0000;
   height: 24px;

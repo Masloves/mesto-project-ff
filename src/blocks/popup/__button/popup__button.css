@@ -19,13 +19,13 @@
   cursor: pointer;
 }
 
-.popup__button-inactive {
+.popup__button_disabled {
   color: rgba(0, 0, 0, 0.1);
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);  
 }
 
-.popup__button-inactive:hover {
+.popup__button_disabled:hover {
   color: rgba(0, 0, 0, 0.1);
   background-color: #fff;
   border: 1px solid rgba(0, 0, 0, 0.1);
