@@ -1,9 +1,9 @@
 import './pages/index.css';
-import { initialCards } from './scripts/cards.js';
-import { createCard, deleteCard, handleCardLike } from './components/card.js';
+// import { initialCards } from './scripts/cards.js';
+import { createCard, deleteCard, likeCard, handleLikeCounter } from './components/card.js';
 import { openModal, closeModal  } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes } from './components/api.js'
+import { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes, deleteCardApi } from './components/api.js'
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -130,13 +130,37 @@ function renderProfileImage(user) {
   profileImage.style = `background-image: url(${user.avatar})`;
 }
 
+function handleCardLike(likeButton, cardLikeCounter, cardId, numberOfLikes) {
+  if (!numberOfLikes) {
+    putCardLikes(cardId)
+      .then((card) => {
+        likeCard(likeButton);
+        handleLikeCounter(cardLikeCounter, card.likes.length);
+        console.log(card)
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else {
+    deleteCardLikes(cardId)
+      .then((card) => {
+        likeCard(likeButton);
+        handleLikeCounter(cardLikeCounter, card.likes.length);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
+// console.log(card)
 let userId
 
-Promise.all([getInitialUser(), getInitialCards()]).then(([user, cards]) => {
-  userId = user._id;
-  renderUser(user);
-  renderProfileImage(user);
-  cards.forEach(card => cardsContainer.append(createCard(card, userId, deleteCard, handleImageClick, handleCardLike)));
-  console.log(user);
-  console.log(cards);
+Promise.all([getInitialUser(), getInitialCards()])
+  .then(([user, cards]) => {
+    userId = user._id;
+    renderUser(user);
+    renderProfileImage(user);
+    cards.forEach(card => cardsContainer.append(createCard(card, userId, deleteCard, handleImageClick, handleCardLike)));
+    console.log(user);
+    console.log(cards);
 })

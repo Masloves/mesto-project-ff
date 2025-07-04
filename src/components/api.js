@@ -61,6 +61,24 @@ const getCardPost = (card) => {
 const putCardLikes = (cardId) => {
   return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
     method: "PUT",
+    headers: config.headers,
+  })
+  .then(res => {
+    if (res.ok) {
+      console.log(2)
+      return res.json();
+    }
+    console.log(1)
+    return Promise.reject(`Ошибка: ${res.status}`);
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+}
+
+const deleteCardLikes = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+    method: "DELETE",
     headers: config.headers
   })
   .then(res => {
@@ -74,8 +92,8 @@ const putCardLikes = (cardId) => {
   });
 }
 
-function deleteCardLikes(cardId) {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
+const deleteCardApi = (cardId) => {
+  return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers
   })
@@ -105,4 +123,4 @@ const getInitialCards = () => {
   });
 }
 
-export { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes };
+export { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes, deleteCardApi };

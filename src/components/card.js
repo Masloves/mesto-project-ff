@@ -1,4 +1,4 @@
-import { putCardLikes, deleteCardLikes } from './api.js'
+// import { putCardLikes, deleteCardLikes } from './api.js'
 
 function createCard(
   card,
@@ -20,7 +20,16 @@ function createCard(
   cardImage.setAttribute("alt", card.name);
   cardTitle.textContent = card.name;
 
-  let numberOfLikes = card.likes.some(like => like._id === userId);
+  handleLikeCounter(cardLikeCounter, card.likes.length);
+
+  if (userId != card.owner._id) {
+    deleteButton.remove();
+  }
+
+  let numberOfLikes = card.likes.some((like) => {
+    return like._id === userId;
+  });
+
 
   if (numberOfLikes) {
     handleCardLike(likeButton);
@@ -29,14 +38,12 @@ function createCard(
   deleteButton.addEventListener("click", deleteCard);
   
   // likeButton.addEventListener("click", handleCardLike);
-  likeButton.addEventListener("click", () => {
+  likeButton.addEventListener("click", function () {
     numberOfLikes = likeButton.classList.contains("card__like-button_is-active");
     handleCardLike(likeButton, cardLikeCounter, card._id, numberOfLikes)
   });
   
   cardImage.addEventListener("click", handleImageClick);
-
-  hendleLikeCounter(cardLikeCounter, card.likes.length);
 
   return cardElement;
 };
@@ -46,7 +53,7 @@ function deleteCard(evt) {
   card.remove();
 };
 
-function hendleLikeCounter(element, value) {
+function handleLikeCounter(element, value) {
   element.textContent = value;
 }
 
@@ -54,30 +61,30 @@ function hendleLikeCounter(element, value) {
 //   evt.target.classList.toggle("card__like-button_is-active");
 // };
 
-function handleCardLike(likeButton, cardLikeCounter, cardId, numberOfLikes) {
-  if (!numberOfLikes) {
-    putCardLikes(cardId)
-      .then((card) => {
-        likeCard(likeButton);
-        hendleLikeCounter(cardLikeCounter, card.likes.length);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    deleteCardLikes(cardId)
-      .then((card) => {
-        likeCard(likeButton);
-        hendleLikeCounter(cardLikeCounter, card.likes.length);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-}
+// function handleCardLike(likeButton, cardLikeCounter, cardId, numberOfLikes) {
+//   if (!numberOfLikes) {
+//     putCardLikes(cardId)
+//       .then((card) => {
+//         likeCard(likeButton);
+//         hendleLikeCounter(cardLikeCounter, card.likes.length);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   } else {
+//     deleteCardLikes(cardId)
+//       .then((card) => {
+//         likeCard(likeButton);
+//         hendleLikeCounter(cardLikeCounter, card.likes.length);
+//       })
+//       .catch((err) => {
+//         console.log(err);
+//       });
+//   }
+// }
 
 function likeCard(element) {
   element.classList.toggle("card__like-button_is-active");
 }
 
-export { createCard, deleteCard, handleCardLike };
+export { createCard, deleteCard, likeCard, handleLikeCounter };
