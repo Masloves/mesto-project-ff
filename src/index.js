@@ -2,7 +2,7 @@ import './pages/index.css';
 import { createCard, likeCard, handleLikeCounter, deleteCard } from './components/card.js';
 import { openModal, closeModal  } from './components/modal.js';
 import { enableValidation, clearValidation } from './components/validation.js';
-import { getInitialUser, getInitialCards, UserProfilePatch, CardPost, putCardLikes, deleteCardLikes, deleteCardFetch, updateAvatarPatch } from './components/api.js'
+import { getInitialUser, getInitialCards, userProfilePatch, cardPost, putCardLikes, deleteCardLikes, deleteCardFetch, updateAvatarPatch } from './components/api.js'
 
 const validationConfig = {
   formSelector: ".popup__form",
@@ -14,37 +14,37 @@ const validationConfig = {
 };
 const cardsContainer = document.querySelector(".places__list");
 
-const editButton = document.querySelector(".profile__edit-button");
-const editPopup = document.querySelector('.popup_type_edit');
-const editForm = editPopup.querySelector(".popup__form");
-const editName = editPopup.querySelector(".popup__input_type_name");
-const editDescription = editPopup.querySelector(".popup__input_type_description");
+const profileEditButton = document.querySelector(".profile__edit-button");
+const profileEditPopup = document.querySelector('.popup_type_edit');
+const profileEditForm = profileEditPopup.querySelector(".popup__form");
+const inputProfileName = profileEditPopup.querySelector(".popup__input_type_name");
+const inputProfileDescription = profileEditPopup.querySelector(".popup__input_type_description");
 
 const profileTitle = document.querySelector(".profile__title");
 const profileDescription = document.querySelector(".profile__description");
 const profileImage = document.querySelector(".profile__image");
 const profileImagePopup = document.querySelector(".popup_type_avatar");
 
-const addButton = document.querySelector(".profile__add-button");
-const addPopup = document.querySelector(".popup_type_new-card");
-const addForm = addPopup.querySelector(".popup__form");
-const addName = addPopup.querySelector(".popup__input_type_card-name");
-const addUrl = addPopup.querySelector(".popup__input_type_url");
+const newCardAddButton = document.querySelector(".profile__add-button");
+const newCardAddPopup = document.querySelector(".popup_type_new-card");
+const newCardAddForm = newCardAddPopup.querySelector(".popup__form");
+const inputNameFormAddNewCard = newCardAddPopup.querySelector(".popup__input_type_card-name");
+const inputUrlFormAddNewCard = newCardAddPopup.querySelector(".popup__input_type_url");
 
-const popups = document.querySelectorAll(".popup");
+const popupsArray = document.querySelectorAll(".popup");
 
 const popupImage = document.querySelector(".popup_type_image");
 const popupImageElement = popupImage.querySelector(".popup__image");
-const popupCaption = popupImage.querySelector(".popup__caption");
+const popupImageCaption = popupImage.querySelector(".popup__caption");
 
 const avatarPopup = document.querySelector(".popup_type_avatar");
 const profileImageForm = avatarPopup.querySelector(".popup__form");
-const url = profileImageForm.querySelector(".popup__input_type_url");
+const inputUrlFormAvatar = profileImageForm.querySelector(".popup__input_type_url");
 
 let userId
 
 
-function renderButton(form, text) {
+function setSubmitButtonText(form, text) {
   const submitButton = form.querySelector(".popup__button");
   submitButton.textContent = text;
 }
@@ -53,7 +53,7 @@ function renderButton(form, text) {
 function handleImageClick(evt) {
   popupImageElement.alt = evt.target.alt;
   popupImageElement.src = evt.target.src;
-  popupCaption.textContent = evt.target.alt;
+  popupImageCaption.textContent = evt.target.alt;
   openModal(popupImage);
 };
 
@@ -63,58 +63,58 @@ function renderUser(user) {
   profileDescription.textContent = user.about;
 }
 
-function openEditForm() {
-  editName.value = profileTitle.textContent;
-  editDescription.value = profileDescription.textContent;
-  clearValidation(editForm, validationConfig);
-  openModal(editPopup);
+function openProfileEditForm() {
+  inputProfileName.value = profileTitle.textContent;
+  inputProfileDescription.value = profileDescription.textContent;
+  clearValidation(profileEditForm, validationConfig);
+  openModal(profileEditPopup);
 }
 
 function handleEditFormSubmit(evt) {
   evt.preventDefault();
   const user = {};
-  user.name = editName.value;
-  user.about = editDescription.value;
-  renderButton(editForm, "Сохранение...");
-  UserProfilePatch(user)
+  user.name = inputProfileName.value;
+  user.about = inputProfileDescription.value;
+  setSubmitButtonText(profileEditForm, "Сохранение...");
+  userProfilePatch(user)
     .then((user) => {
       renderUser(user);
-      closeModal(editPopup)
+      closeModal(profileEditPopup)
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
-        renderButton(editForm, "Сохранить");
-      });
+      setSubmitButtonText(profileEditForm, "Сохранить");
+    });
 };
 
-editButton.addEventListener("click", openEditForm);
-editForm.addEventListener("submit", handleEditFormSubmit);
+profileEditButton.addEventListener("click", openProfileEditForm);
+profileEditForm.addEventListener("submit", handleEditFormSubmit);
 
 //Добавление и удаление карточки
-function openAddForm() {
-  addForm.reset();
-  clearValidation(addForm, validationConfig);
-  openModal(addPopup)
+function openNewCardAddForm() {
+  newCardAddForm.reset();
+  clearValidation(newCardAddForm, validationConfig);
+  openModal(newCardAddPopup)
 }
 
 function handleAddFormSubmit(evt) {
   evt.preventDefault();
   const card = {};
-  card.name = addName.value;
-  card.link = addUrl.value;
-  renderButton(addForm, "Сохранение...");
-  CardPost(card)
+  card.name = inputNameFormAddNewCard.value;
+  card.link = inputUrlFormAddNewCard.value;
+  setSubmitButtonText(newCardAddForm, "Сохранение...");
+  cardPost(card)
     .then((card) => {
       cardsContainer.prepend(createCard(card, userId, handleImageClick, handleCardLike, handleDeleteCard));
-      closeModal(addPopup);
+      closeModal(newCardAddPopup);
     })
     .catch((err) => {
       console.log(err);
     })
     .finally(() => {
-      renderButton(addForm, "Сохранить");
+      setSubmitButtonText(newCardAddForm, "Сохранить");
     });
 };
 
@@ -123,16 +123,19 @@ function handleDeleteCard(element, cardId) {
     .then(() => {
       deleteCard(element)
     })
+    .catch((err) => {
+      console.log(err);
+    })
 }
 
-addButton.addEventListener("click", openAddForm);
-addForm.addEventListener("submit", handleAddFormSubmit);
+newCardAddButton.addEventListener("click", openNewCardAddForm);
+newCardAddForm.addEventListener("submit", handleAddFormSubmit);
 
 
 //Перебор массива с модалками и навешивание слушателя
 //на каждый оверлей и кнопку закрытия 
 
-popups.forEach((popup) => {
+popupsArray.forEach((popup) => {
   popup.addEventListener("click", (evt) => {
     if(evt.target.classList.contains("popup__close")||
     evt.target.classList.contains("popup")) {
@@ -176,11 +179,11 @@ function openProfileImageForm() {
     openModal(profileImagePopup);
 }
 
-function submitForm(evt) {
+function submitProfileImageForm(evt) {
   evt.preventDefault();
   const user = {};
-  user.avatar = url.value;
-  renderButton(profileImageForm, "Сохранение...");
+  user.avatar = inputUrlFormAvatar.value;
+  setSubmitButtonText(profileImageForm, "Сохранение...");
   updateAvatarPatch(user)
     .then((user) => {
       renderProfileImage(user);
@@ -190,13 +193,13 @@ function submitForm(evt) {
       console.log(err);
     })
     .finally(() => {
-        renderButton(profileImageForm, "Сохранить");
+      setSubmitButtonText(profileImageForm, "Сохранить");
     });
 }
 
 profileImage.addEventListener("click", openProfileImageForm);
 
-profileImagePopup.addEventListener("submit", submitForm);
+profileImagePopup.addEventListener("submit", submitProfileImageForm);
 
 Promise.all([getInitialUser(), getInitialCards()])
   .then(([user, cards]) => {
@@ -204,6 +207,9 @@ Promise.all([getInitialUser(), getInitialCards()])
     renderUser(user);
     renderProfileImage(user);
     cards.forEach(card => cardsContainer.append(createCard(card, userId, handleImageClick, handleCardLike, handleDeleteCard)));
-})
-
-enableValidation(validationConfig);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
+  
+  enableValidation(validationConfig);

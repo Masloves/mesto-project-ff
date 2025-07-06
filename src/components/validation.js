@@ -34,9 +34,6 @@ const checkInputValidity = (formElement, inputElement, validationConfig) => {
   }
 };
 
-// Вызовем функцию isValid на каждый ввод символа
-// formInput.addEventListener('input', isValid);
-
 const setEventListeners = (formElement, validationConfig) => {
   // Находим все поля внутри формы,
   // сделаем из них массив методом Array.from
@@ -74,9 +71,6 @@ const enableValidation = (validationConfig) => {
   const formList = Array.from(document.querySelectorAll(validationConfig.formSelector));
   // Переберём полученную коллекцию
   formList.forEach((formElement) => {
-    formElement.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-    });
     // Для каждой формы вызовем функцию setEventListeners,
     // передав ей элемент формы
     setEventListeners(formElement, validationConfig);

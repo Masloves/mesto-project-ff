@@ -11,8 +11,8 @@ function createCard(
 
   const cardImage = cardElement.querySelector(".card__image");
   const cardTitle = cardElement.querySelector(".card__title");
-  const deleteButton = cardElement.querySelector(".card__delete-button");
-  const likeButton = cardElement.querySelector(".card__like-button");
+  const cardDeleteButton = cardElement.querySelector(".card__delete-button");
+  const cardLikeButton = cardElement.querySelector(".card__like-button");
   const cardLikeCounter = cardElement.querySelector('.card__like-counter')
 
   cardImage.setAttribute("src", card.link);
@@ -22,7 +22,7 @@ function createCard(
   handleLikeCounter(cardLikeCounter, card.likes.length);
 
   if (userId != card.owner._id) {
-    deleteButton.remove();
+    cardDeleteButton.remove();
   }
 
   let cardLiked = card.likes.some((like) => {
@@ -31,18 +31,18 @@ function createCard(
 
 
   if (cardLiked) {
-    likeCard(likeButton);
+    likeCard(cardLikeButton);
   }
   
 
-  likeButton.addEventListener("click", function () {
-    cardLiked = likeButton.classList.contains("card__like-button_is-active");
-    handleCardLike(likeButton, cardLikeCounter, card._id, cardLiked)
+  cardLikeButton.addEventListener("click", function () {
+    cardLiked = cardLikeButton.classList.contains("card__like-button_is-active");
+    handleCardLike(cardLikeButton, cardLikeCounter, card._id, cardLiked)
   });
   
   cardImage.addEventListener("click", handleImageClick);
 
-  deleteButton.addEventListener("click", () => {
+  cardDeleteButton.addEventListener("click", () => {
     handleDeleteCard(cardElement, card._id)
   })
 

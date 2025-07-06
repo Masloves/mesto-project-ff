@@ -8,9 +8,9 @@ const config = {
 
 const checkResponse = (res) => {
   if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+    return res.json();
+  }
+  return Promise.reject(`Ошибка: ${res.status}`);
 }
 
 const getInitialUser = () => {
@@ -20,7 +20,7 @@ const getInitialUser = () => {
   .then(checkResponse);
 }
 
-const UserProfilePatch = (user) => {
+const userProfilePatch = (user) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
@@ -32,7 +32,7 @@ const UserProfilePatch = (user) => {
   .then(checkResponse);
 }
 
-const CardPost = (card) => {
+const cardPost = (card) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -86,4 +86,4 @@ const getInitialCards = () => {
   .then(checkResponse);
 }
 
-export { getInitialUser, getInitialCards, UserProfilePatch, CardPost, putCardLikes, deleteCardLikes, deleteCardFetch, updateAvatarPatch };
+export { getInitialUser, getInitialCards, userProfilePatch, cardPost, putCardLikes, deleteCardLikes, deleteCardFetch, updateAvatarPatch };
