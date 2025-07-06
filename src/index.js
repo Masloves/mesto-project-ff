@@ -149,7 +149,6 @@ function handleCardLike(likeButton, cardLikeCounter, cardId, cardLiked) {
       .then((card) => {
         likeCard(likeButton);
         handleLikeCounter(cardLikeCounter, card.likes.length);
-        console.log(card)
       })
       .catch((err) => {
         console.log(err);
@@ -205,9 +204,6 @@ Promise.all([getInitialUser(), getInitialCards()])
     renderUser(user);
     renderProfileImage(user);
     cards.forEach(card => cardsContainer.append(createCard(card, userId, handleImageClick, handleCardLike, handleDeleteCard)));
-    console.log(user);
-    console.log(user.avatar);
-    console.log(cards);
 })
 
 enableValidation(validationConfig);
