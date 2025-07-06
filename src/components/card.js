@@ -1,11 +1,10 @@
-// import { putCardLikes, deleteCardLikes } from './api.js'
 
 function createCard(
   card,
   userId,
-  deleteCard,
   handleImageClick,
-  handleCardLike
+  handleCardLike,
+  handleDeleteCard,
 ) {
   const cardTemplate = document.querySelector("#card-template").content;
   const cardElement = cardTemplate.querySelector(".card").cloneNode(true);
@@ -26,65 +25,41 @@ function createCard(
     deleteButton.remove();
   }
 
-  let numberOfLikes = card.likes.some((like) => {
+  let cardLiked = card.likes.some((like) => {
     return like._id === userId;
   });
 
 
-  if (numberOfLikes) {
-    handleCardLike(likeButton);
+  if (cardLiked) {
+    likeCard(likeButton);
   }
-
-  deleteButton.addEventListener("click", deleteCard);
   
-  // likeButton.addEventListener("click", handleCardLike);
+
   likeButton.addEventListener("click", function () {
-    numberOfLikes = likeButton.classList.contains("card__like-button_is-active");
-    handleCardLike(likeButton, cardLikeCounter, card._id, numberOfLikes)
+    cardLiked = likeButton.classList.contains("card__like-button_is-active");
+    handleCardLike(likeButton, cardLikeCounter, card._id, cardLiked)
   });
   
   cardImage.addEventListener("click", handleImageClick);
 
+  deleteButton.addEventListener("click", () => {
+    handleDeleteCard(cardElement, card._id)
+  })
+
   return cardElement;
 };
 
-function deleteCard(evt) {
-  const card = evt.currentTarget.closest(".card")
-  card.remove();
-};
 
 function handleLikeCounter(element, value) {
   element.textContent = value;
 }
 
-// function handleCardLike (evt) {
-//   evt.target.classList.toggle("card__like-button_is-active");
-// };
-
-// function handleCardLike(likeButton, cardLikeCounter, cardId, numberOfLikes) {
-//   if (!numberOfLikes) {
-//     putCardLikes(cardId)
-//       .then((card) => {
-//         likeCard(likeButton);
-//         hendleLikeCounter(cardLikeCounter, card.likes.length);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   } else {
-//     deleteCardLikes(cardId)
-//       .then((card) => {
-//         likeCard(likeButton);
-//         hendleLikeCounter(cardLikeCounter, card.likes.length);
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   }
-// }
-
 function likeCard(element) {
   element.classList.toggle("card__like-button_is-active");
 }
 
-export { createCard, deleteCard, likeCard, handleLikeCounter };
+function deleteCard (element) {
+  element.remove();
+}
+
+export { createCard, likeCard, handleLikeCounter, deleteCard };

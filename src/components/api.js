@@ -6,22 +6,21 @@ const config = {
   }
 };
 
+const checkResponse = (res) => {
+  if (res.ok) {
+      return res.json();
+    }
+    return Promise.reject(`Ошибка: ${res.status}`);
+}
+
 const getInitialUser = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
-const getUserProfilePatch = (user) => {
+const UserProfilePatch = (user) => {
   return fetch(`${config.baseUrl}/users/me`, {
     method: 'PATCH',
     headers: config.headers,
@@ -30,15 +29,10 @@ const getUserProfilePatch = (user) => {
         about: user.about
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
+  .then(checkResponse);
 }
 
-const getCardPost = (card) => {
+const CardPost = (card) => {
   return fetch(`${config.baseUrl}/cards`, {
     method: 'POST',
     headers: config.headers,
@@ -47,15 +41,7 @@ const getCardPost = (card) => {
       link: card.link
     })
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
 const putCardLikes = (cardId) => {
@@ -63,17 +49,7 @@ const putCardLikes = (cardId) => {
     method: "PUT",
     headers: config.headers,
   })
-  .then(res => {
-    if (res.ok) {
-      console.log(2)
-      return res.json();
-    }
-    console.log(1)
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
 const deleteCardLikes = (cardId) => {
@@ -81,46 +57,33 @@ const deleteCardLikes = (cardId) => {
     method: "DELETE",
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
-const deleteCardApi = (cardId) => {
+const deleteCardFetch = (cardId) => {
   return fetch(`${config.baseUrl}/cards/${cardId}`, {
     method: "DELETE",
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
+  .then(checkResponse);
+}
+
+const updateAvatarPatch = (user) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: "PATCH",
+    headers: config.headers,
+    body: JSON.stringify({
+      avatar: user.avatar,
+    })
   })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
 const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-  .then(res => {
-    if (res.ok) {
-      return res.json();
-    }
-    return Promise.reject(`Ошибка: ${res.status}`);
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+  .then(checkResponse);
 }
 
-export { getInitialUser, getInitialCards, getUserProfilePatch, getCardPost, putCardLikes, deleteCardLikes, deleteCardApi };
+export { getInitialUser, getInitialCards, UserProfilePatch, CardPost, putCardLikes, deleteCardLikes, deleteCardFetch, updateAvatarPatch };

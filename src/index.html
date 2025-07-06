@@ -12,9 +12,10 @@
   <header class="header page__section">
     <img src="<%=require('./images/logo.svg')%>" alt="Логотип проекта место" class="logo header__logo">
   </header>
+  <!-- style="background-image: url(<%=require('./images/avatar.jpg')%>);" -->
   <main class="content">
     <section class="profile page__section">
-      <div class="profile__image" style="background-image: url(<%=require('./images/avatar.jpg')%>);"></div>
+      <div class="profile__image"></div>
       <div class="profile__info">
         <h1 class="profile__title">Жак-Ив Кусто</h1>
         <button class="profile__edit-button" type="button"></button>
@@ -106,7 +107,37 @@
     </div>
   </div>
 </div>
-
+<div class="popup popup_is-animated popup_type_avatar">
+  <div class="popup__content">
+    <button type="button" class="popup__close"></button>
+    <h3 class="popup__title">Обновить аватар</h3>
+    <form class="popup__form" name="avatar" novalidate>
+      <input
+        id="photo-input"
+        type="url"
+        name="photo"
+        class="popup__input popup__input_type_url"
+        placeholder="Ссылка на фотографию"
+        required
+      />
+      <span class="form__input-error photo-input-error"></span>
+      <button type="submit" class="button popup__button">
+        Сохранить
+      </button>
+    </form>
+  </div>
+</div>
+<div class="popup popup_is-animated popup_type_delete">
+        <div class="popup__content">
+          <button type="button" class="popup__close"></button>
+          <h3 class="popup__title">Вы уверены?</h3>
+          <form class="popup__form" name="delete" novalidate>       
+            <button type="submit" class="button popup__button">
+              Да
+            </button>
+          </form>
+        </div>
+      </div>
 <template id="card-template">
   <li class="places__item card">
     <img class="card__image" src="" alt="" />
